@@ -1,25 +1,26 @@
+import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid2";
-import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { useTodosDispatch } from "../context/todosContext";
+import IconButton from "@mui/material/IconButton";
 import { useToast } from "../context/ToastContext";
-
+import { useTodosDispatch} from "../context/todosContext";
 export default function Todo({ todo, showDelete, showUpdate }) {
     const dispatch = useTodosDispatch();
-
     const { showHideToast } = useToast();
+
+    //function of check icon button
     function handleCheckClick() {
         dispatch({
-            type: "toggledCompleted",
+            type: "toggleCompleted",
             payload: {
                 id: todo.id,
             },
-        });
+        })
         showHideToast("تم التعديل بنجاح");
     }
 
@@ -36,20 +37,18 @@ export default function Todo({ todo, showDelete, showUpdate }) {
             <Card
                 sx={{
                     minWidth: 275,
-                    background: "#283593",
+                    bgcolor: (theme) => theme.palette.primary.main,
                     color: "white",
-                    mt: 1,
-                    minHeight: "70px",
+                    mt: 3,
                 }}
-                className="todo-card"
             >
-                <CardContent style={{ padding: "10px" }}>
-                    <Grid container spacing={2}>
+                <CardContent sx={{ px: { xs: 1, sm: 3 } }}>
+                    <Grid container spacing={1} sx={{ textAlign: "right" }}>
                         <Grid
-                            size={8}
+                            size={{ xs: 12, sm: 8 }}
                             style={{
                                 wordWrap: "break-word",
-                                overflowWrap: "break-word",
+                                overflow: "break-word",
                             }}
                         >
                             <Typography
@@ -72,15 +71,20 @@ export default function Todo({ todo, showDelete, showUpdate }) {
                             </Typography>
                         </Grid>
                         <Grid
-                            size={4}
+                            size={{ xs: 12, sm: 4 }}
                             display="flex"
-                            justifyContent="space-around"
+                            justifyContent="space-between"
                             alignItems="center"
+                            sx={{
+                                marginRight: { sm: "auto" },
+                                marginTop: { xs: 2 },
+                                justifyContent: { xs: "space-around" },
+                            }}
                         >
                             <IconButton
                                 aria-label="delete"
                                 sx={{
-                                    background: todo.isCompleted
+                                    bgcolor: todo.isCompleted
                                         ? "#8bc34a"
                                         : "white",
                                     color: todo.isCompleted
@@ -96,7 +100,7 @@ export default function Todo({ todo, showDelete, showUpdate }) {
                             <IconButton
                                 aria-label="delete"
                                 sx={{
-                                    background: "white",
+                                    bgcolor: "white",
                                     color: "#ce93d8",
                                     border: "3px solid #ce93d8",
                                 }}
@@ -108,14 +112,14 @@ export default function Todo({ todo, showDelete, showUpdate }) {
                             <IconButton
                                 aria-label="delete"
                                 sx={{
-                                    background: "white",
+                                    bgcolor: "white",
                                     color: "#b23c17",
                                     border: "3px solid #b23c17",
                                 }}
                                 className="IconButton"
                                 onClick={handleDeleteClick}
                             >
-                                <DeleteOutlineOutlinedIcon />
+                                <DeleteOutlineIcon />
                             </IconButton>
                         </Grid>
                     </Grid>

@@ -1,63 +1,85 @@
 import "./App.css";
 import TodoList from "./components/TodoList";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { TodosContext } from "./context/todosContext";
-import { v4 as uuidv4 } from "uuid";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
+import Box from "@mui/material/Box";
+import { v4 as uuidv4 } from "uuid";
 import { ToastProvider } from "./context/ToastContext";
 import TodosProvider from "./context/todosContext";
-
-const theme = createTheme({
-    typography: {
-        fontFamily: ["Alexandria"],
-    },
+let theme = createTheme({
     palette: {
         primary: {
-            main: "#9e58ca",
+            main: "#283593",
+        },
+        secondary: {
+            main: "rgb(223 222 226)",
+        },
+    },
+    typography: {
+        fontFamily: ["Alexandria"],
+        h2: {
+            fontWeight: 700,
         },
     },
 });
 
-const initialTodos = [
+const initioalTodos = [
     {
         id: uuidv4(),
-        title: "قراءة كتاب",
-        details: "قراءة الشابتر الثالث من الكتاب",
+        title: "المهمة الأولى",
+        details: "التفاصيل الخاصة بالمهمة الاولى",
         isCompleted: false,
     },
     {
         id: uuidv4(),
-        title: "طبخ الاكل",
-        details: "عمل وجبات الاسبوع كاملة",
+        title: "المهمة الثانية",
+        details: "التفاصيل الخاصة بالمهمة الثانية",
         isCompleted: false,
     },
     {
         id: uuidv4(),
-        title: "شراء مستلزمات المنزل",
-        details: "الذهاب لمركز التسوق والسوبر ماركت",
+        title: "المهمة الثالثة",
+        details: "التفاصيل الخاصة بالمهمة الثالثة",
+        isCompleted: false,
+    },
+    {
+        id: uuidv4(),
+        title: "المهمة الرابعة",
+        details: "التفاصيل الخاصة بالمهمة الرابعة",
+        isCompleted: false,
+    },
+    {
+        id: uuidv4(),
+        title: "المهمة الخامسة",
+        details: "التفاصيل الخاصة بالمهمة الخامسة",
+        isCompleted: false,
+    },
+    {
+        id: uuidv4(),
+        title: "المهمة السادسة",
+        details: "التفاصيل الخاصة بالمهمة السادسة",
         isCompleted: false,
     },
 ];
 function App() {
-    const [todos, setTodos] = useState(initialTodos);
-
+    const [todos, setTodos] = useState(initioalTodos);
     return (
         <ThemeProvider theme={theme}>
             <TodosProvider>
                 <ToastProvider>
-                    <div
+                    <Box
                         className="App"
-                        style={{
-                            minHeight: "100vh",
-                            backgroundColor: "rgb(223 222 226)",
+                        sx={{
+                            height: "100vh",
+                            bgcolor: theme.palette.secondary.main,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             direction: "rtl",
                         }}
                     >
-                        <TodoList />
-                    </div>
+                            <TodoList />
+                    </Box>
                 </ToastProvider>
             </TodosProvider>
         </ThemeProvider>

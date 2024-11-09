@@ -7,13 +7,14 @@ export const DispatchContext = createContext(null);
 const TodosProvider = ({ children }) => {
     const [todos, dispatch] = useReducer(todosReducer, []);
     return (
-        <TodosContext.Provider value={todos}>
+        <TodosContext.Provider value={ todos }>
             <DispatchContext.Provider value={dispatch}>
                 {children}
             </DispatchContext.Provider>
         </TodosContext.Provider>
     );
 };
+
 export const useTodos = () => {
     return useContext(TodosContext);
 };

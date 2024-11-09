@@ -1,15 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
-
 export default function reducer(currentTodos, action) {
     switch (action.type) {
         case "added": {
-            const newTodo = {
+            const newTodos = {
                 id: uuidv4(),
                 title: action.payload.newTitle,
                 details: "",
                 isCompleted: false,
             };
-            const updatedTodos = [...currentTodos, newTodo];
+            const updatedTodos = [...currentTodos, newTodos];
             localStorage.setItem("todos", JSON.stringify(updatedTodos));
             return updatedTodos;
         }
@@ -22,7 +21,7 @@ export default function reducer(currentTodos, action) {
         }
         case "updated": {
             const updatedTodos = currentTodos.map((t) => {
-                if (t.id == action.payload.id) {
+                if (t.id === action.payload.id) {
                     return {
                         ...t,
                         title: action.payload.title,
@@ -40,7 +39,7 @@ export default function reducer(currentTodos, action) {
                 JSON.parse(localStorage.getItem("todos")) ?? [];
             return storageTodos;
         }
-        case "toggledCompleted": {
+        case "toggleCompleted": {
             const updatedTodos = currentTodos.map((t) => {
                 if (t.id == action.payload.id) {
                     const updatedTodo = {
@@ -55,8 +54,7 @@ export default function reducer(currentTodos, action) {
             return updatedTodos;
         }
         default: {
-            throw Error("unknown action " + action.type);
+            throw Error("unknown action" + action.type);
         }
     }
-    return [];
 }

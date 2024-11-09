@@ -1,20 +1,15 @@
 import * as React from "react";
-import Container from "@mui/material/Container";
-
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-
+import Container from "@mui/material/Container";
 import Todo from "./Todo";
-
 import Grid from "@mui/material/Grid2";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-
 import { useState, useEffect, useMemo } from "react";
 
 import Dialog from "@mui/material/Dialog";
@@ -24,30 +19,26 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { useToast } from "../context/ToastContext";
-import { useTodos, useTodosDispatch } from "../context/todosContext";
-
+import {useTodos, useTodosDispatch} from "../context/todosContext";
 export default function TodoList() {
-    const todos = useTodos();
-    const dispatch = useTodosDispatch();
+    const  todos = useTodos();
+    const  dispatch = useTodosDispatch();
     const { showHideToast } = useToast();
+    const [titleError, setTitleError] = useState(false);
     const [showUpdateDialog, setShowUpdateDialog] = useState(false);
     const [dialogTodo, setDialogTodo] = useState(null);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
     const [displayedTodosType, setDisplayedTodosType] = useState("all");
     const [titleInput, setTitleInput] = useState("");
 
-    // filtration arrays
-
+    //function of filter buttons
     const completedTodos = useMemo(() => {
-        return todos.filter((t) => {
-            return t.isCompleted;
-        });
+        return todos.filter((t) => t.isCompleted);
     }, [todos]);
 
     const notCompletedTodos = useMemo(() => {
-        return todos.filter((t) => {
-            return !t.isCompleted;
-        });
+        return todos.filter((t) => !t.isCompleted);
     }, [todos]);
 
     let todosToBeRendered = todos;
@@ -60,7 +51,7 @@ export default function TodoList() {
         todosToBeRendered = todos;
     }
 
-    const todoJsx = todosToBeRendered.map((t) => {
+    const todosJsx = todosToBeRendered.map((t) => {
         return (
             <Todo
                 key={t.id}
@@ -75,10 +66,14 @@ export default function TodoList() {
         setDisplayedTodosType(e.target.value);
     }
 
+    //useEffect hook
     useEffect(() => {
-        dispatch({ type: "get" });
+        dispatch({
+            type: "get",
+        });
     }, []);
 
+    //function of add button
     function handleAddClick() {
         dispatch({
             type: "added",
@@ -90,15 +85,15 @@ export default function TodoList() {
         showHideToast("تمت الإضافة بنجاح");
     }
 
-    function handleDeleteDialogClose() {
+    //function of delete dialog
+    const handleDeleteDialogClose = () => {
         setShowDeleteDialog(false);
-    }
-
+    };
+    //functions of delete icon button
     function openDeleteDialog(todo) {
         setDialogTodo(todo);
         setShowDeleteDialog(true);
     }
-
     function handleDeleteConfirm() {
         dispatch({
             type: "deleted",
@@ -106,17 +101,28 @@ export default function TodoList() {
                 id: dialogTodo.id,
             },
         });
+        if (!dialogTodo.title.trim()) {
+            setTitleError(true);
+        }
         setShowDeleteDialog(false);
         showHideToast("تم الحذف بنجاح");
     }
-
-    function handleUpdateClose() {
+    /*===============================================================================*/
+    //function of update dialog
+    const handleUpdateClose = () => {
         setShowUpdateDialog(false);
-    }
+    };
 
+    //functions of update icon button
     function openUpdateDialog(todo) {
-        setDialogTodo(todo);
+        setDialogTodo({
+            title: todo.title,
+            details: todo.details,
+            id: todo.id,
+        });
         setShowUpdateDialog(true);
+        setTitleError(false);
+        setDialogTodo(todo);
     }
 
     function handleUpdateConfirm() {
@@ -128,6 +134,9 @@ export default function TodoList() {
                 details: dialogTodo.details,
             },
         });
+        if (!dialogTodo.title.trim()) {
+            setTitleError(true);
+        }
         setShowUpdateDialog(false);
         showHideToast("تم التحديث بنجاح");
     }
@@ -140,31 +149,32 @@ export default function TodoList() {
                 onClose={handleDeleteDialogClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                style={{ direction: "rtl" }}
+                sx={{ direction: "rtl" }}
             >
                 <DialogTitle id="alert-dialog-title">
-                    هل أنت متأكد من حذف المهمة ؟
+                    هل انت متأكد من حذف المهمة ؟
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        لا يمكنك التراجع عن الحذف بعد إتمامه
+                        لا يمكن التراجع عن الحذف بعد إتمامه
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDeleteDialogClose}>إغلاق</Button>
-                    <Button autoFocus onClick={handleDeleteConfirm}>
-                        حذف
+                    <Button onClick={handleDeleteConfirm} autoFocus>
+                        نعم
                     </Button>
                 </DialogActions>
             </Dialog>
             {/* end delete dialog */}
+            {/*==============================================================================*/}
             {/* start update dialog */}
             <Dialog
                 open={showUpdateDialog}
                 onClose={handleUpdateClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                style={{ direction: "rtl" }}
+                sx={{ direction: "rtl" }}
             >
                 <DialogTitle id="alert-dialog-title">تعديل المهمة</DialogTitle>
                 <DialogContent>
@@ -182,7 +192,10 @@ export default function TodoList() {
                                 ...dialogTodo,
                                 title: e.target.value,
                             });
+                            setTitleError(false);
                         }}
+                        error={titleError}
+                        helperText={titleError ? "يرجى إدخال عنوان المهمة" : ""}
                     />
                     <TextField
                         autoFocus
@@ -201,25 +214,17 @@ export default function TodoList() {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleUpdateClose}>إلغاء</Button>
-                    <Button autoFocus onClick={handleUpdateConfirm}>
-                        تعديل
+                    <Button onClick={handleUpdateClose}>إغلاق</Button>
+                    <Button onClick={handleUpdateConfirm} autoFocus>
+                        تأكيد
                     </Button>
                 </DialogActions>
             </Dialog>
             {/* end update dialog */}
-            <Container maxWidth="sm">
-                <Card
-                    sx={{ minWidth: 275, maxHeight: "90vh", overflowY: "auto" }}
-                >
+            <Container maxWidth="lg">
+                <Card sx={{ minWidth: 275, height: "95vh", overflowY: "auto" }}>
                     <CardContent>
-                        <Typography
-                            gutterBottom
-                            variant="h2"
-                            style={{ fontWeight: "bold", marginBottom: "0px" }}
-                        >
-                            مهامي
-                        </Typography>
+                        <Typography variant="h2">مهامي</Typography>
                         <Divider />
                         {/* start filter buttons */}
                         <ToggleButtonGroup
@@ -227,7 +232,7 @@ export default function TodoList() {
                             exclusive
                             onChange={changeDisplayedType}
                             aria-label="text alignment"
-                            style={{ direction: "ltr", marginTop: "30px" }}
+                            sx={{ direction: "ltr", mt: 4 }}
                         >
                             <ToggleButton value="non-completed">
                                 غير منجز
@@ -237,47 +242,39 @@ export default function TodoList() {
                         </ToggleButtonGroup>
                         {/* end filter buttons */}
                         {/* start list of todos */}
-                        {todoJsx}
+                        {todosJsx}
                         {/* end list of todos */}
-
-                        {/* input filed and add button */}
+                        {/* start input field and add button */}
                         <Grid
                             container
                             spacing={2}
                             sx={{
-                                mt: 2,
+                                mt: 5,
                                 position: "sticky",
-                                bottom: "0",
-                                backgroundColor: "white",
-                                p: 1,
+                                bottom: 0,
+                                bgcolor: "white",
                             }}
                         >
-                            <Grid
-                                size={8}
-                                display="flex"
-                                justifyContent="space-around"
-                                alignItems="center"
-                            >
+                            <Grid size={8} sx={{ my: 1 }}>
                                 <TextField
                                     id="outlined-basic"
                                     label="عنوان المهمة"
                                     variant="outlined"
-                                    style={{ width: "100%" }}
+                                    sx={{ width: "100%" }}
                                     value={titleInput}
                                     onChange={(e) => {
                                         setTitleInput(e.target.value);
                                     }}
                                 />
                             </Grid>
-                            <Grid
-                                size={4}
-                                display="flex"
-                                justifyContent="space-around"
-                                alignItems="center"
-                            >
+                            <Grid size={4} sx={{ my: 1 }}>
                                 <Button
                                     variant="contained"
-                                    style={{ width: "100%", height: "100%" }}
+                                    sx={{
+                                        width: "100%",
+                                        height: "100%",
+                                        bgcolor: "rgb(158 88 202)",
+                                    }}
                                     onClick={handleAddClick}
                                     disabled={titleInput.length == 0}
                                 >
@@ -285,7 +282,7 @@ export default function TodoList() {
                                 </Button>
                             </Grid>
                         </Grid>
-                        {/* end filed and add button */}
+                        {/* end input field and add button */}
                     </CardContent>
                 </Card>
             </Container>
