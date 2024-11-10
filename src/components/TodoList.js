@@ -276,7 +276,7 @@ export default function TodoList() {
                                         bgcolor: "rgb(158 88 202)",
                                     }}
                                     onClick={handleAddClick}
-                                    disabled={titleInput.length == 0}
+                                    disabled={!titleInput.trim()}
                                 >
                                     إضافة
                                 </Button>
